@@ -1,0 +1,261 @@
+<p-toolbar class="toolbar black-color">
+  <div class="p-toolbar-group-left">
+    <!-- <img
+      src="http://primefaces.org/primeng/assets/showcase/images/primeng-logo-dark.svg"
+    /> -->
+    <h1>ET & MS</h1>
+  </div>
+  <!-- <div class="p-d-flex">
+    <p-menubar [model]="items"></p-menubar>
+  </div> -->
+  <div class="p-toolbar-group-right">
+    <p-menubar class="black-color" [model]="items"></p-menubar>
+
+    <p-button icon="pi pi-user"></p-button>
+  </div>
+</p-toolbar>
+
+<!-- <div class="p-d-flex">
+  <p-menubar [model]="items"></p-menubar>
+</div> -->
+<br />
+<p-toast></p-toast>
+
+<div class="card">
+  <p-table
+    #dt
+    [value]="products"
+    [rows]="10"
+    [paginator]="true"
+    [globalFilterFields]="['code']"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="p-d-flex p-ai-center p-jc-between">
+        <!-- <h5 class="p-m-0">Manage List</h5> -->
+
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($event.target.value, 'contains')"
+            placeholder="Equipment Id or code"
+          />
+        </span>
+        <div>
+          <button
+            pButton
+            pRipple
+            label="New"
+            icon="pi pi-plus"
+            class="p-button-primary p-mr-2"
+            (click)="openNew()"
+          ></button>
+          <button
+            pButton
+            pRipple
+            [label]="Delete"
+            icon="pi pi-trash"
+            class="p-button-danger"
+            (click)="deleteSelectedProducts()"
+            [disabled]="!selectedProducts || !selectedProducts.length"
+          ></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th pSortableColumn="code">
+          Code <p-sortIcon field="code"></p-sortIcon>
+        </th>
+        <th pSortableColumn="equipment">
+          Equipment <p-sortIcon field="equipment"></p-sortIcon>
+        </th>
+        <th pSortableColumn="maintainceType">
+          Maintance Type <p-sortIcon field="maintainceType"></p-sortIcon>
+        </th>
+        <th pSortableColumn="description">
+          Description <p-sortIcon field="description"></p-sortIcon>
+        </th>
+        <th pSortableColumn="action">
+          Action <p-sortIcon field="action"></p-sortIcon>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-product>
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="product"></p-tableCheckbox>
+        </td>
+        <td>{{ product.code }}</td>
+        <td>{{ product.equipment }}</td>
+        <td>{{ product.maintainceType }}</td>
+        <td>{{ product.description }}</td>
+
+        <td>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-primary p-mr-2"
+            (click)="editProduct(product)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-warning"
+            (click)="deleteProduct(product)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="p-d-flex p-ai-center p-jc-between">
+        In total there are {{ products ? products.length : 0 }} products.
+      </div>
+    </ng-template>
+  </p-table>
+
+  <div class="card" style="float: 'left'">
+    <p-card
+      header="Simple Card"
+      [style]="{ width: '25rem', 'margin-bottom': '2em' }"
+    >
+    </p-card>
+
+    <p-card
+      header="Simple Card"
+      [style]="{ width: '25rem', 'margin-bottom': '2em' }"
+    >
+    </p-card>
+  </div>
+</div>
+
+<p-dialog
+  [(visible)]="productDialog"
+  [style]="{ width: '450px' }"
+  header="Product Details"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <div class="p-field">
+      <label for="name">Name</label>
+      <input
+        type="text"
+        pInputText
+        id="name"
+        [(ngModel)]="product.name"
+        required
+        autofocus
+      />
+      <small class="p-invalid" *ngIf="submitted && !product.name"
+        >Name is required.</small
+      >
+    </div>
+    <div class="p-field">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        pInputTextarea
+        [(ngModel)]="product.description"
+        required
+        rows="3"
+        cols="20"
+      ></textarea>
+    </div>
+
+    <div class="p-field">
+      <label class="p-mb-3">description</label>
+      <div class="p-formgrid p-grid">
+        <div class="p-field-radiobutton p-col-6">
+          <p-radioButton
+            id="description1"
+            name="description"
+            value="Accessories"
+            [(ngModel)]="product.description"
+          ></p-radioButton>
+          <label for="description1">Accessories</label>
+        </div>
+        <div class="p-field-radiobutton p-col-6">
+          <p-radioButton
+            id="description2"
+            name="description"
+            value="Clothing"
+            [(ngModel)]="product.description"
+          ></p-radioButton>
+          <label for="description2">Clothing</label>
+        </div>
+        <div class="p-field-radiobutton p-col-6">
+          <p-radioButton
+            id="description3"
+            name="description"
+            value="Electronics"
+            [(ngModel)]="product.description"
+          ></p-radioButton>
+          <label for="description3">Electronics</label>
+        </div>
+        <div class="p-field-radiobutton p-col-6">
+          <p-radioButton
+            id="description4"
+            name="description"
+            value="Fitness"
+            [(ngModel)]="product.description"
+          ></p-radioButton>
+          <label for="description4">Fitness</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-formgrid p-grid">
+      <div class="p-field p-col">
+        <label for="price">Price</label>
+        <p-inputNumber
+          id="price"
+          [(ngModel)]="product.price"
+          mode="currency"
+          currency="USD"
+          locale="en-US"
+        ></p-inputNumber>
+      </div>
+      <div class="p-field p-col">
+        <label for="quantity">Quantity</label>
+        <p-inputNumber
+          id="quantity"
+          [(ngModel)]="product.quantity"
+        ></p-inputNumber>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      label="Cancel"
+      icon="pi pi-times"
+      class="p-button-text"
+      (click)="hideDialog()"
+    ></button>
+    <button
+      pButton
+      pRipple
+      label="Save"
+      icon="pi pi-check"
+      class="p-button-text"
+      (click)="saveProduct()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
